@@ -1,3 +1,9 @@
+// Configuração da API - altere apenas esta linha para mudar o endereço
+const API_URL = window.location.hostname === 'localhost' 
+    ? 'http://localhost:3000'              // Desenvolvimento
+    : `http://${window.location.hostname}:3000`; // Produção (usa o mesmo domínio)
+
+// Estado da aplicação
 let alunoAtual = null;
 let professores = [];
 let turmas = [];
@@ -32,7 +38,7 @@ async function carregarRelatorio() {
     
     try {
         const searchTerm = document.getElementById('pesquisaRelatorio').value;
-        let url = 'http://localhost:3000/api/relatorio/tutorandos';
+        let url = `${API_URL}/api/relatorio/tutorandos`;
         if (searchTerm && searchTerm.trim() !== '') {
             url += `?search=${encodeURIComponent(searchTerm.trim())}`;
         }
@@ -58,7 +64,7 @@ async function carregarRelatorio() {
             <div class="erro">
                 <i class="fas fa-exclamation-triangle"></i>
                 <p>Erro ao carregar relatório: ${error.message}</p>
-                <p>Verifique se o servidor está rodando em http://localhost:3000</p>
+                <p>Tentando conectar em: ${API_URL}</p>
                 <button onclick="carregarRelatorio()" class="btn-atualizar">
                     <i class="fas fa-sync-alt"></i> Tentar novamente
                 </button>
@@ -69,7 +75,7 @@ async function carregarRelatorio() {
 
 async function carregarEstatisticas() {
     try {
-        const response = await fetch('http://localhost:3000/api/relatorio/estatisticas');
+        const response = await fetch(`${API_URL}/api/relatorio/estatisticas`);
         const stats = await response.json();
         
         const container = document.getElementById('estatisticasContainer');
@@ -181,12 +187,12 @@ function limparPesquisa() {
 
 async function carregarTurmas() {
     try {
-        const response = await fetch('http://localhost:3000/api/turmas');
+        const response = await fetch(`${API_URL}/api/turmas`);
         turmas = await response.json();
         preencherSelectTurmas();
     } catch (error) {
         console.error('Erro ao carregar turmas:', error);
-        mostrarModal('Erro ao carregar turmas. Tente novamente.');
+        mostrarModal(`Erro ao carregar turmas. Verifique conexão com: ${API_URL}`);
     }
 }
 
@@ -254,7 +260,7 @@ async function identificarAluno() {
     }
 
     try {
-        const response = await fetch('http://localhost:3000/api/aluno/verificar', {
+        const response = await fetch(`${API_URL}/api/aluno/verificar`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -290,17 +296,17 @@ async function identificarAluno() {
         }
     } catch (error) {
         console.error('Erro ao verificar aluno:', error);
-        mostrarModal('Erro ao verificar aluno. Tente novamente.');
+        mostrarModal(`Erro ao verificar aluno. Verifique conexão com: ${API_URL}`);
     }
 }
 
 async function carregarProfessores() {
     try {
-        const response = await fetch('http://localhost:3000/api/professores');
+        const response = await fetch(`${API_URL}/api/professores`);
         professores = await response.json();
     } catch (error) {
         console.error('Erro ao carregar professores:', error);
-        mostrarModal('Erro ao carregar professores. Tente novamente.');
+        mostrarModal(`Erro ao carregar professores. Verifique conexão com: ${API_URL}`);
     }
 }
 
@@ -359,7 +365,7 @@ async function votar(professorId) {
     }
 
     try {
-        const response = await fetch('http://localhost:3000/api/votar', {
+        const response = await fetch(`${API_URL}/api/votar`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -384,7 +390,7 @@ async function votar(professorId) {
         }
     } catch (error) {
         console.error('Erro ao votar:', error);
-        mostrarModal('Erro ao registrar voto. Tente novamente.');
+        mostrarModal(`Erro ao registrar voto. Verifique conexão com: ${API_URL}`);
     }
 }
 

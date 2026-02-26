@@ -7,8 +7,13 @@ const path = require('path');
 const app = express();
 const PORT = 3000;
 
-// Middleware
-app.use(cors());
+// Configuração CORS mais permissiva para desenvolvimento
+app.use(cors({
+    origin: '*', // Em produção, você pode restringir para seu domínio
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname)));
 app.use('/images', express.static(path.join(__dirname, 'images')));
@@ -408,8 +413,16 @@ app.post('/api/reset', (req, res) => {
     }
 });
 
-app.listen(PORT, () => {
-    console.log(`Servidor rodando em http://localhost:${PORT}`);
+// Middleware para log de requisições (útil para debug)
+app.use((req, res, next) => {
+    console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
+    next();
+});
+
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Servidor rodando em http://0.0.0.0:${PORT}`);
+    console.log(`Acesse localmente: http://localhost:${PORT}`);
+    console.log(`Acesse pela rede: http://${require('os').networkInterfaces().eth0?.[0]?.address || 'IP_DO_SERVIDOR'}:${PORT}`);
     console.log(`Pastas disponíveis:`);
     console.log(`- Imagens: http://localhost:${PORT}/images/`);
     console.log(`- Assets: http://localhost:${PORT}/assets/`);
