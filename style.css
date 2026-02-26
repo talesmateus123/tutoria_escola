@@ -1,0 +1,713 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+
+header {
+    margin-bottom: 40px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    margin-bottom: 15px;
+}
+
+.logo-container {
+    flex-shrink: 0;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid #667eea;
+    background: white;
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+}
+
+.logo-escola {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.header-text {
+    flex: 1;
+}
+
+.header-text h1 {
+    color: #333;
+    font-size: 2.2em;
+    margin-bottom: 5px;
+    line-height: 1.2;
+}
+
+.header-text .subtitle {
+    color: #667eea;
+    font-size: 1.2em;
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+
+.header-tabs {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: 10px;
+}
+
+.tab-button {
+    padding: 12px 25px;
+    background: none;
+    border: none;
+    border-radius: 8px 8px 0 0;
+    font-size: 1.1em;
+    font-weight: 600;
+    color: #666;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.tab-button i {
+    font-size: 1.2em;
+}
+
+.tab-button:hover {
+    color: #667eea;
+    background: #f8f9fa;
+}
+
+.tab-button.active {
+    color: #667eea;
+    border-bottom: 3px solid #667eea;
+    background: #f8f9fa;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.aluno-info {
+    background: #f8f9fa;
+    padding: 30px;
+    border-radius: 15px;
+    margin-bottom: 30px;
+}
+
+.aluno-info h2 {
+    margin-bottom: 20px;
+    color: #444;
+}
+
+.aluno-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.input-group label {
+    font-weight: 600;
+    color: #555;
+    font-size: 0.95em;
+}
+
+.input-group input,
+.input-group select {
+    padding: 12px 15px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 1em;
+    transition: all 0.3s;
+}
+
+.input-group input:focus,
+.input-group select:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.input-group input.error,
+.input-group select.error {
+    border-color: #dc3545;
+}
+
+.aluno-form button {
+    padding: 14px 30px;
+    background: #667eea;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-top: 10px;
+}
+
+.aluno-form button:hover {
+    background: #5a67d8;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+
+.aluno-saudacao {
+    background: #e3f2fd;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.aluno-saudacao h3 {
+    color: #1976d2;
+    font-size: 1.3em;
+}
+
+.aluno-saudacao p {
+    color: #555;
+    margin-top: 5px;
+}
+
+.btn-sair {
+    padding: 8px 20px;
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.btn-sair:hover {
+    background: #c82333;
+}
+
+.professores-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 25px;
+    margin-bottom: 30px;
+}
+
+.professor-card {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+    border: 2px solid transparent;
+}
+
+.professor-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+}
+
+.professor-card.bloqueado {
+    opacity: 0.6;
+    filter: grayscale(50%);
+    border-color: #dc3545;
+}
+
+.professor-foto {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.professor-info {
+    padding: 20px;
+}
+
+.professor-info h3 {
+    margin-bottom: 10px;
+    color: #333;
+    font-size: 1.2em;
+}
+
+.professor-vagas {
+    color: #666;
+    margin-bottom: 15px;
+    font-size: 0.9em;
+}
+
+.vagas-disponiveis {
+    color: #28a745;
+    font-weight: bold;
+}
+
+.vagas-esgotadas {
+    color: #dc3545;
+    font-weight: bold;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 10px;
+    background: #f0f0f0;
+    border-radius: 5px;
+    margin: 10px 0;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    transition: width 0.3s;
+}
+
+.btn-votar {
+    width: 100%;
+    padding: 12px;
+    background: #667eea;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.btn-votar:hover:not(:disabled) {
+    background: #5a67d8;
+}
+
+.btn-votar:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+.info-rodape {
+    background: #fff3cd;
+    border: 1px solid #ffeeba;
+    color: #856404;
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+    margin-top: 30px;
+}
+
+.relatorio-header {
+    margin-bottom: 30px;
+}
+
+.relatorio-header h2 {
+    color: #333;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.relatorio-header h2 i {
+    color: #667eea;
+}
+
+.estatisticas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.stat-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 15px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    color: white;
+    box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+}
+
+.stat-icon {
+    background: rgba(255, 255, 255, 0.2);
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5em;
+}
+
+.stat-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-value {
+    font-size: 1.8em;
+    font-weight: bold;
+    line-height: 1.2;
+}
+
+.stat-label {
+    font-size: 0.9em;
+    opacity: 0.9;
+}
+
+.pesquisa-container {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 15px;
+    display: flex;
+    gap: 15px;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    margin-bottom: 30px;
+}
+
+.pesquisa-group {
+    flex: 1;
+    min-width: 250px;
+}
+
+.pesquisa-group label {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 5px;
+}
+
+.pesquisa-group label i {
+    color: #667eea;
+}
+
+.pesquisa-group input {
+    width: 100%;
+}
+
+.btn-limpar, .btn-atualizar {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 48px;
+}
+
+.btn-limpar {
+    background: #6c757d;
+    color: white;
+}
+
+.btn-limpar:hover {
+    background: #5a6268;
+}
+
+.btn-atualizar {
+    background: #28a745;
+    color: white;
+}
+
+.btn-atualizar:hover {
+    background: #218838;
+}
+
+.relatorio-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.professor-relatorio-card {
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    border: 1px solid #f0f0f0;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.professor-relatorio-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+
+.professor-relatorio-header {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.professor-relatorio-foto {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #667eea;
+}
+
+.professor-relatorio-info {
+    flex: 1;
+}
+
+.professor-relatorio-info h3 {
+    color: #333;
+    margin-bottom: 5px;
+    font-size: 1.2em;
+}
+
+.professor-relatorio-stats {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+}
+
+.stat-badge {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.9em;
+    font-weight: 600;
+}
+
+.stat-badge.disponivel {
+    background: #d4edda;
+    color: #155724;
+}
+
+.stat-badge.lotado {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.progress-percent {
+    font-size: 0.9em;
+    color: #666;
+    font-weight: 600;
+}
+
+.tutorandos-lista {
+    margin-top: 15px;
+}
+
+.tutorandos-lista h4 {
+    color: #555;
+    margin-bottom: 15px;
+    font-size: 1em;
+}
+
+.tutorandos-tabela {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95em;
+}
+
+.tutorandos-tabela th {
+    background: #f8f9fa;
+    color: #555;
+    font-weight: 600;
+    padding: 12px;
+    text-align: left;
+    border-bottom: 2px solid #ddd;
+}
+
+.tutorandos-tabela td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.tutorandos-tabela tr:hover td {
+    background: #f8f9fa;
+}
+
+.sem-tutorandos {
+    color: #999;
+    font-style: italic;
+    padding: 15px;
+    text-align: center;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.loading, .erro, .sem-resultados {
+    text-align: center;
+    padding: 40px;
+    color: #666;
+    font-size: 1.1em;
+}
+
+.erro {
+    color: #dc3545;
+}
+
+.modal {
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 30px;
+    border-radius: 15px;
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+    position: relative;
+    animation: slideIn 0.3s;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.close {
+    position: absolute;
+    right: 20px;
+    top: 10px;
+    font-size: 28px;
+    font-weight: bold;
+    color: #666;
+    cursor: pointer;
+}
+
+.close:hover {
+    color: #333;
+}
+
+.success-message {
+    color: #28a745;
+    font-size: 1.2em;
+    padding: 10px;
+}
+
+.warning-message {
+    color: #dc3545;
+    font-size: 1.2em;
+    padding: 10px;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 20px;
+    }
+    
+    .header-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+    }
+    
+    .logo-container {
+        width: 120px;
+        height: 120px;
+    }
+    
+    .header-text h1 {
+        font-size: 1.8em;
+    }
+    
+    .header-tabs {
+        flex-direction: column;
+    }
+    
+    .tab-button {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .professores-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .estatisticas-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .pesquisa-container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .btn-limpar, .btn-atualizar {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .professor-relatorio-header {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+}
+
+.loading:after {
+    content: '';
+    width: 20px;
+    height: 20px;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #667eea;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    display: inline-block;
+    margin-left: 10px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
