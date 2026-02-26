@@ -1,0 +1,131 @@
+name: Deploy para VPS
+
+on:
+  push:
+    branches: [ main ]  # Executa quando houver push na main
+  workflow_dispatch:      # Permite executar manualmente
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout do código
+        uses: actions/checkout@v3
+
+      - name: 🔧 Configurar Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          
+      - name: 📦 Instalar dependências
+        run: npm ci
+        
+      - name: 🔍 Verificar sintaxe
+        run: node -c server.js
+        
+      - name: 🚀 Deploy via SSH
+        uses: appleboy/ssh-action@v0.1.5
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT || '22' }}
+          script: |
+            # Cores para output
+            RED='\033[0;31m'
+            GREEN='\033[0;32m'
+            YELLOW='\033[1;33m'
+            NC='\033[0m'
+            
+            echo -e "${GREEN}🚀 Iniciando deploy...${NC}"
+            
+            # Diretório da aplicação
+            APP_DIR="/var/www/tutoria_escola"
+            BACKUP_DIR="/var/www/backups/tutoria_escola"
+            TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
+            
+            # Criar diretórios se não existirem
+            mkdir -p $APP_DIR
+            mkdir -p $BACKUP_DIR
+            
+            # Backup do banco de dados (se existir)
+            if [ -f "$APP_DIR/db.json" ]; then
+                echo -e "${YELLOW}📦 Fazendo backup do banco de dados...${NC}"
+                cp $APP_DIR/db.json $BACKUP_DIR/db.json.backup_$TIMESTAMP
+                echo -e "${GREEN}✅ Backup criado em: $BACKUP_DIR/db.json.backup_$TIMESTAMP${NC}"
+            fi
+            
+            # Backup completo da aplicação
+            if [ -d "$APP_DIR" ]; then
+                echo -e "${YELLOW}📦 Fazendo backup da aplicação...${NC}"
+                tar -czf $BACKUP_DIR/app_backup_$TIMESTAMP.tar.gz -C $(dirname $APP_DIR) $(basename $APP_DIR) 2>/dev/null
+                echo -e "${GREEN}✅ Backup criado em: $BACKUP_DIR/app_backup_$TIMESTAMP.tar.gz${NC}"
+            fi
+            
+            # Limpar diretório (mantendo node_modules para acelerar)
+            echo -e "${YELLOW}🧹 Preparando diretório...${NC}"
+            cd $APP_DIR
+            rm -rf assets images *.html *.js *.json 2>/dev/null || true
+            
+            # Clonar atualizações (ou baixar arquivos)
+            echo -e "${YELLOW}📥 Baixando atualizações...${NC}"
+            cd /tmp
+            rm -rf repo_temp
+            git clone --depth 1 https://github.com/${{ github.repository }}.git repo_temp
+            cp -r repo_temp/* $APP_DIR/
+            cp -r repo_temp/.gitignore $APP_DIR/ 2>/dev/null || true
+            rm -rf repo_temp
+            
+            cd $APP_DIR
+            
+            # Restaurar banco de dados (se não veio do repositório)
+            if [ ! -f "$APP_DIR/db.json" ] && [ -f "$BACKUP_DIR/db.json.backup_$TIMESTAMP" ]; then
+                echo -e "${YELLOW}🔄 Restaurando banco de dados...${NC}"
+                cp $BACKUP_DIR/db.json.backup_$TIMESTAMP $APP_DIR/db.json
+            fi
+            
+            # Instalar dependências
+            echo -e "${YELLOW}📦 Instalando dependências...${NC}"
+            npm install --production
+            
+            # Verificar se o PM2 está instalado
+            if ! command -v pm2 &> /dev/null; then
+                echo -e "${YELLOW}📦 Instalando PM2...${NC}"
+                npm install -g pm2
+            fi
+            
+            # Parar aplicação se estiver rodando
+            echo -e "${YELLOW}🔄 Parando aplicação...${NC}"
+            pm2 stop tutoria-escola 2>/dev/null || true
+            
+            # Iniciar aplicação
+            echo -e "${YELLOW}🚀 Iniciando aplicação...${NC}"
+            PORT=3000 NODE_ENV=production pm2 start server.js --name tutoria-escola
+            
+            # Salvar configuração do PM2
+            pm2 save
+            pm2 startup 2>/dev/null || true
+            
+            # Verificar status
+            echo -e "${YELLOW}📊 Status da aplicação:${NC}"
+            pm2 status tutoria-escola
+            
+            # Verificar se está respondendo
+            sleep 3
+            if curl -s http://localhost:3000 > /dev/null; then
+                echo -e "${GREEN}✅ Aplicação está respondendo na porta 3000${NC}"
+            else
+                echo -e "${RED}❌ Aplicação não está respondendo${NC}"
+                pm2 logs tutoria-escola --lines 20
+                exit 1
+            fi
+            
+            # Limpeza de backups antigos (mantém últimos 5)
+            echo -e "${YELLOW}🧹 Limpando backups antigos...${NC}"
+            cd $BACKUP_DIR
+            ls -t app_backup_* | tail -n +6 | xargs -r rm
+            ls -t db.json.backup_* | tail -n +6 | xargs -r rm
+            
+            echo -e "${GREEN}✅ Deploy concluído com sucesso!${NC}"
+            echo -e "${GREEN}🌐 Acesse: http://${{ secrets.VPS_HOST }}:3000${NC}"
