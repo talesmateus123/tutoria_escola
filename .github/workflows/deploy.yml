@@ -24,6 +24,20 @@ jobs:
       - name: 🔍 Verificar sintaxe
         run: node -c server.js
         
+      - name: 🧪 Testar conexão SSH
+        uses: appleboy/ssh-action@v0.1.5
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT || '22' }}
+          script: |
+            echo "✅ Conexão SSH estabelecida com sucesso!"
+            echo "👤 Usuário: $(whoami)"
+            echo "🏠 Diretório: $(pwd)"
+            echo "💻 Sistema: $(uname -a)"
+            echo "🕐 Data/Hora: $(date)"
+
       - name: 🚀 Deploy via SSH
         uses: appleboy/ssh-action@v0.1.5
         with:
@@ -129,3 +143,11 @@ jobs:
             
             echo -e "${GREEN}✅ Deploy concluído com sucesso!${NC}"
             echo -e "${GREEN}🌐 Acesse: http://${{ secrets.VPS_HOST }}:3000${NC}"
+            
+            # Log final para debug
+            echo -e "${YELLOW}📊 Status final:${NC}"
+            pm2 list
+            echo -e "${YELLOW}💻 Uso de recursos:${NC}"
+            df -h /var/www
+            echo -e "${YELLOW}🔍 Últimas linhas do log:${NC}"
+            pm2 logs tutoria-escola --lines 5 --nostream
